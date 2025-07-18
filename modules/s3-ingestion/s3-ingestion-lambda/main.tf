@@ -17,7 +17,8 @@ resource "aws_lambda_function" "api_writer" {
 
   environment {
     variables = {
-      BUCKET_NAME = var.bucket_name   
+      BUCKET_NAME = var.bucket_name 
+      DYNAMODB_TABLE     = var.dynamodb_table_name  
     }
   }
 }

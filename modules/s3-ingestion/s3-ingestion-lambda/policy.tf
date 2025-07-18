@@ -11,6 +11,11 @@ resource "aws_iam_role_policy" "lambda_policy" {
         Resource = "${var.bucket_arn}/*"
       },
       {
+        Effect = "Allow",
+        Action = ["dynamodb:PutItem"],
+        Resource = var.dynamodb_table_arn
+      },
+      {
         Effect   = "Allow",
         Action   = [
           "logs:CreateLogGroup",
