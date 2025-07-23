@@ -9,13 +9,7 @@ resource "aws_dynamodb_table" "api_ingestion_metadata" {
     type = "S"
   }
 
-  # Optional attribute for TTL
-  attribute {
-    name = "ttl"  # Optional field for TTL
-    type = "N"
-  }
-
-  # Optional attribute for secondary index
+  # Secondary index attribute
   attribute {
     name = "status"
     type = "S"
@@ -28,7 +22,7 @@ resource "aws_dynamodb_table" "api_ingestion_metadata" {
     projection_type = "ALL"
   }
 
-  # TTL configuration (optional - enable if you want records to expire)
+  # TTL configuration (no need to declare 'ttl' in attribute block)
   ttl {
     attribute_name = "ttl"
     enabled        = true
@@ -37,10 +31,11 @@ resource "aws_dynamodb_table" "api_ingestion_metadata" {
   tags = var.tags
 }
 
-output "table_name" {
+
+output "dynamodb_table_name" {
   value = aws_dynamodb_table.api_ingestion_metadata.name
 }
 
-output "table_arn" {
+output "dynamodb_table_arn" {
   value = aws_dynamodb_table.api_ingestion_metadata.arn
 }

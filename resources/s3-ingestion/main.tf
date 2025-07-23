@@ -1,5 +1,5 @@
 locals {
-  env = yamldecode(file("${path.module}/../../environments/sentinel.yaml"))
+  env = yamldecode(file("${path.module}/../../environments/webforx.yaml"))
 }
 
 terraform {
@@ -11,11 +11,11 @@ terraform {
     }
   }
   backend "s3" {
-    bucket         = "development-sentinel-sandbox-tf-state"
-    key            = "sentinel/s3-ingestion/terraform.tfstate"
+    bucket         = "development-webforx-sandbox-tf-state"
+    key            = "webforx/s3-ingestion/terraform.tfstate"
     region         = "us-east-1"
     encrypt        = true
-    dynamodb_table = "development-sentinel-sandbox-tf-state-lock"
+    dynamodb_table = "development-webforx-sandbox-tf-state-lock"
   }
 }
 
@@ -25,20 +25,20 @@ module "s3-ingestion-s3" {
   aws_region_main = local.env.s3-ingestion.aws_region_main
 }
 
-module "dynamodb_ingestion_metadata" {
-  source = "../../modules/s3-ingestion/s3-ingestion-dynamodb-table"
-  tags   = local.env.tags
+module "s3-ingestion-dynamodb-table" {
+  source          = "../../modules/s3-ingestion/s3-ingestion-dynamodb-table"
+  tags            = local.env.tags
   aws_region_main = local.env.s3-ingestion.aws_region_main
 }
 
 module "s3-ingestion-lambda" {
-  source          = "../../modules/s3-ingestion/s3-ingestion-lambda"
-  tags            = local.env.tags
-  aws_region_main = local.env.s3-ingestion.aws_region_main
-  bucket_name     = module.s3-ingestion-s3.bucket_name
-  bucket_arn      = module.s3-ingestion-s3.bucket_arn
-  dynamodb_table_name     = module.s3-ingestion-dynamodb-table.dynamodb_table_name
-  dynamodb_table_arn      = module.s3-ingestion-dynamodb-table.dynamodb_table_arn
+  source              = "../../modules/s3-ingestion/s3-ingestion-lambda"
+  tags                = local.env.tags
+  aws_region_main     = local.env.s3-ingestion.aws_region_main
+  bucket_name         = module.s3-ingestion-s3.bucket_name
+  bucket_arn          = module.s3-ingestion-s3.bucket_arn
+  dynamodb_table_name = module.s3-ingestion-dynamodb-table.dynamodb_table_name
+  dynamodb_table_arn  = module.s3-ingestion-dynamodb-table.dynamodb_table_arn
 }
 
 module "s3-ingestion-api-gateway" {
